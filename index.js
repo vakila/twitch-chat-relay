@@ -3,6 +3,10 @@ const url = require("url");
 const WebSocket = require("ws");
 const EventEmitter = require("events");
 
+if (!(process.env.TWITCH_NICK && process.env.TWITCH_OAUTH_TOKEN && process.env.TWITCH_CHANNELS)) {
+  throw new Error('Please configure environment variables TWITCH_NICK, TWITCH_OAUTH_TOKEN, TWITCH_CHANNELS');
+}
+
 const port = process.env.PORT || 5000;
 
 const channels = process.env.TWITCH_CHANNELS.split(",");
