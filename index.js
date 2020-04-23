@@ -81,7 +81,9 @@ const server = http.createServer((req, res) => {
   console.log(req.url, req.headers);
   const { pathname } = url.parse(req.url);
   if (req.headers.accept && req.headers.accept === 'text/event-stream' && pathname === '/events') {
+    console.log('attempting to send SSEs');
     emitter.addListener("message", (msg) => sendSSE(req, res, msg));
+    emitter.emit("message", "does it work?");
   } else {
     res.statusCode = 404;
     res.setHeader("Content-Type", "text/plain");
