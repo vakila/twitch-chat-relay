@@ -66,42 +66,16 @@ process.on("SIGTERM", () => {
   process.exit(0);
 });
 
-
-const setupSSE = (req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Access-Control-Allow-Origin', 'https://anjana.static.observableusercontent.com');
-};
-
-
-
 const server = http.createServer((req, res) => {
-  console.log(req.url, req.headers);
-  const { pathname } = url.parse(req.url);
-  if (req.headers.accept && req.headers.accept === 'text/event-stream' && pathname === '/events') {
-    console.log('attempting to send SSEs');
-    setupSSE(req,res);
-    const sendSSE = (data) => {
-      console.log('attempting to send', data);
-      res.write(`data: ${JSON.stringify(data)}`);
-    };
-    emitter.addListener("message", sendSSE);
-    emitter.emit("message", "does it work?");
-    socket.on("close", () => emitter.removeListener("message", sendSSE));
-  } else {
-    res.statusCode = 404;
-    res.setHeader("Content-Type", "text/plain");
-    res.end("404");
-  }
+  res.statusCode = 404;
+  res.setHeader("Content-Type", "text/plain");
+  res.end("404");
 });
 
-
-const socketServer = new WebSocket.Server({server});
+const socketServer = new WebSocket.Server({ server });
 
 socketServer.on("connection", (socket, request) => {
-  const {pathname} = url.parse(request.url);
+  const { pathname } = url.parse(request.url);
   const channel = pathname.slice(1);
   if (!channels.includes(channel)) return void socket.terminate();
   const message = message => {
