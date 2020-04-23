@@ -78,7 +78,7 @@ const sendSSE = (req, res, data) => {
 };
 
 const server = http.createServer((req, res) => {
-  console.log(req);
+  console.log(req.url, req.headers);
   const { pathname } = url.parse(req.url);
   if (req.headers.accept && req.headers.accept === 'text/event-stream' && pathname === '/events') {
     emitter.addListener("message", (msg) => sendSSE(req, res, msg));
