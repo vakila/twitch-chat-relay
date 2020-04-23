@@ -65,11 +65,28 @@ process.on("SIGTERM", () => {
   process.exit(0);
 });
 
+
+const sendSSE(req, res, data) {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive'
+  });
+
+  res.write(`data: ${JSON.stringify(data)}`);
+}
+
 const server = http.createServer((req, res) => {
-  res.statusCode = 404;
-  res.setHeader("Content-Type", "text/plain");
-  res.end("404");
+  const { pathname } = url.parse(request.url);
+  if (req.headers.accept && req.headers.accept === 'text/event-stream' && pathname === '/events') {
+    emitter.addListener("message", (msg) => sendSSE(req, res, msg));
+  } else {
+    res.statusCode = 404;
+    res.setHeader("Content-Type", "text/plain");
+    res.end("404");
+  }
 });
+
 
 const socketServer = new WebSocket.Server({server});
 
