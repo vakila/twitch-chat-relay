@@ -75,14 +75,21 @@ const setupSSE = (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://anjana.static.observableusercontent.com');
 };
 
+
+
 const server = http.createServer((req, res) => {
   console.log(req.url, req.headers);
   const { pathname } = url.parse(req.url);
   if (req.headers.accept && req.headers.accept === 'text/event-stream' && pathname === '/events') {
     console.log('attempting to send SSEs');
     setupSSE(req,res);
-    emitter.addListener("message", (data) => res.write(`data: ${JSON.stringify(data)}`));
+    const sendSSE = (res, data) => {
+      console.log('attempting to send', data);
+      res.write(`data: ${JSON.stringify(data)}`);
+    };
+    emitter.addListener("message", sendSSE);
     emitter.emit("message", "does it work?");
+    socket.on("close", () => emitter.removeListener("message", sendSSE));
   } else {
     res.statusCode = 404;
     res.setHeader("Content-Type", "text/plain");
