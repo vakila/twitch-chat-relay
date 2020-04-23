@@ -66,14 +66,12 @@ process.on("SIGTERM", () => {
 });
 
 
-const sendSSE = (req, res, data) => {
+const setupSSE = (req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
   res.setHeader('Access-Control-Allow-Origin', 'https://anjana.static.observableusercontent.com');
-
-  res.write(`data: ${JSON.stringify(data)}`);
 };
 
 const server = http.createServer((req, res) => {
@@ -81,7 +79,8 @@ const server = http.createServer((req, res) => {
   const { pathname } = url.parse(req.url);
   if (req.headers.accept && req.headers.accept === 'text/event-stream' && pathname === '/events') {
     console.log('attempting to send SSEs');
-    emitter.addListener("message", (msg) => sendSSE(req, res, msg));
+    setupSSE(req,res);
+    emitter.addListener("message", (data) => res.write(`data: ${JSON.stringify(data)}`));
     emitter.emit("message", "does it work?");
   } else {
     res.statusCode = 404;
