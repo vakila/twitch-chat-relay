@@ -83,7 +83,7 @@ const server = http.createServer((req, res) => {
   if (req.headers.accept && req.headers.accept === 'text/event-stream' && pathname === '/events') {
     console.log('attempting to send SSEs');
     setupSSE(req,res);
-    const sendSSE = (res, data) => {
+    const sendSSE = (data) => {
       console.log('attempting to send', data);
       res.write(`data: ${JSON.stringify(data)}`);
     };
