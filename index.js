@@ -30,6 +30,7 @@ let emitter = new EventEmitter();
     timeout = setTimeout(open, delay + Math.random() * delay);
   };
   socket.onmessage = event => {
+    console.log('socket received message', event.data);
     emitter.emit("message", parseMessage(event.data));
   };
 })();
