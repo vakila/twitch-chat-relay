@@ -66,7 +66,7 @@ process.on("SIGTERM", () => {
 });
 
 
-const sendSSE(req, res, data) {
+const sendSSE = (req, res, data) => {
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
@@ -74,7 +74,7 @@ const sendSSE(req, res, data) {
   });
 
   res.write(`data: ${JSON.stringify(data)}`);
-}
+};
 
 const server = http.createServer((req, res) => {
   const { pathname } = url.parse(request.url);
