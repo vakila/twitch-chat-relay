@@ -70,13 +70,15 @@ const sendSSE = (req, res, data) => {
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive'
+    'Connection': 'keep-alive',
+    'Access-Control-Allow-Origin': 'https://observablehq.com'
   });
 
   res.write(`data: ${JSON.stringify(data)}`);
 };
 
 const server = http.createServer((req, res) => {
+  console.log(req);
   const { pathname } = url.parse(req.url);
   if (req.headers.accept && req.headers.accept === 'text/event-stream' && pathname === '/events') {
     emitter.addListener("message", (msg) => sendSSE(req, res, msg));
