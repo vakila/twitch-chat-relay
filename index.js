@@ -67,12 +67,11 @@ process.on("SIGTERM", () => {
 
 
 const sendSSE = (req, res, data) => {
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
-    'Access-Control-Allow-Origin': 'https://anjana.static.observableusercontent.com'
-  });
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Access-Control-Allow-Origin', 'https://anjana.static.observableusercontent.com');
 
   res.write(`data: ${JSON.stringify(data)}`);
 };
